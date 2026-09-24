@@ -20,6 +20,7 @@ import {
   useReorderTasks,
 } from '@/features/tasks'
 import { useCurrentWorkspace } from '@/features/workspaces'
+import { StressMeter } from '@/features/stress'
 import { Board } from '@/components/task/Board'
 import type { BoardStatus } from '@/components/task/Board'
 import { EmptyState } from '@/components/shared/EmptyState'
@@ -217,6 +218,8 @@ export function DashboardPage() {
           </span>
         </div>
       </header>
+
+      <StressMeter workspaceId={workspaceId} />
 
       <button
         type="button"

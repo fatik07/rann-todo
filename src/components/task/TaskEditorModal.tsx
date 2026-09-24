@@ -1,7 +1,9 @@
 import { useEffect, useState } from 'react'
 import type { FormEvent } from 'react'
+import { CalendarPlus } from 'lucide-react'
 import type { Task } from '@/db/schema'
 import { useUpdateTask } from '@/features/tasks'
+import { formatDateTime } from '@/lib/dates'
 
 import { Button } from '@/components/ui/Button'
 import { Dialog } from '@/components/ui/Dialog'
@@ -99,7 +101,19 @@ export function TaskEditorModal({
           />
         </label>
 
-        <div className="mt-2 flex justify-end gap-2">
+        <div className="mt-2 flex items-center justify-end gap-2">
+          {isEdit && (
+            <p className="mr-auto flex items-center gap-1.5 text-xs text-muted dark:text-dark-muted">
+              <CalendarPlus className="h-3.5 w-3.5" />
+              Created{' '}
+              <time
+                dateTime={new Date(task.createdAt).toISOString()}
+                className="font-medium text-ink dark:text-dark-ink"
+              >
+                {formatDateTime(task.createdAt)}
+              </time>
+            </p>
+          )}
           <Button type="button" variant="secondary" onClick={onClose}>
             Cancel
           </Button>

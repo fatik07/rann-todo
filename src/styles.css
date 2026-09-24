@@ -34,6 +34,9 @@ body,
   --shadow-brutal-soft: 4px 4px 0 0 rgba(31, 27, 22, 0.2);
   --shadow-brutal: 4px 4px 0 0 #1f1b16;
   --shadow-brutal-pink: 4px 4px 0 0 #e46fa5;
+  /* Chart series (validated for CVD separation on --bg-warm) */
+  --chart-added: #e46fa5;
+  --chart-completed: #5f9e5b;
 }
 
 /* Dark mode colors */
@@ -54,6 +57,8 @@ body,
   --shadow-brutal-soft: 4px 4px 0 0 rgba(250, 248, 245, 0.15);
   --shadow-brutal: 4px 4px 0 0 #faf8f5;
   --shadow-brutal-pink: 4px 4px 0 0 #c45a90;
+  --chart-added: #c45a90;
+  --chart-completed: #58a853;
 }
 
 dialog::backdrop {

@@ -55,3 +55,42 @@ export function formatDueDate(date: Date | string | null | undefined): string {
   ] as const
   return `${d.getDate()} ${months[d.getMonth()]} ${time}`
 }
+
+const MONTHS = [
+  'Jan',
+  'Feb',
+  'Mar',
+  'Apr',
+  'May',
+  'Jun',
+  'Jul',
+  'Aug',
+  'Sep',
+  'Oct',
+  'Nov',
+  'Dec',
+] as const
+
+/**
+ * Past timestamp for display: "Today 14:05", "Yesterday 09:30",
+ * "3 Sep 14:05", or "3 Sep 2025 14:05" for other years.
+ */
+export function formatDateTime(date: Date | string | null | undefined): string {
+  if (!date) return ''
+  const d = new Date(date)
+  if (Number.isNaN(d.getTime())) return ''
+
+  const now = new Date()
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate())
+  const target = new Date(d.getFullYear(), d.getMonth(), d.getDate())
+  const diffDays = Math.round((today.getTime() - target.getTime()) / 86_400_000)
+
+  const time = `${pad(d.getHours())}:${pad(d.getMinutes())}`
+
+  if (diffDays === 0) return `Today ${time}`
+  if (diffDays === 1) return `Yesterday ${time}`
+
+  const year =
+    d.getFullYear() === now.getFullYear() ? '' : ` ${d.getFullYear()}`
+  return `${d.getDate()} ${MONTHS[d.getMonth()]}${year} ${time}`
+}
