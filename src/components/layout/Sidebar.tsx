@@ -25,7 +25,7 @@ export function Sidebar({ collapsed }: SidebarProps) {
 
   return (
     <aside
-      className={`flex h-screen shrink-0 flex-col justify-between overflow-x-hidden overflow-y-auto border-r-2 border-ink/10 bg-warm py-6 transition-[width,padding] duration-300 ease-out dark:border-dark-ink/10 dark:bg-dark-warm ${
+      className={`flex h-screen shrink-0 flex-col justify-between border-r-2 border-ink/10 bg-warm py-6 transition-[width,padding] duration-300 ease-out dark:border-dark-ink/10 dark:bg-dark-warm ${
         collapsed ? 'w-20 items-center px-3' : 'w-64 px-5'
       }`}
     >
