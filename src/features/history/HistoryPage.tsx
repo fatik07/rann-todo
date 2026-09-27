@@ -6,9 +6,11 @@ import { EmptyState } from '@/components/shared/EmptyState'
 import { HistoryCard } from '@/components/history/HistoryCard'
 import { useHistory } from '@/features/history'
 import { useCurrentWorkspace } from '@/features/workspaces'
-import type { Task } from '@/db/schema'
+import type { SubtaskProgress, Task } from '@/db/schema'
 
-type FlatTask = { task: Task; date: string }
+type HistoryTask = Task & SubtaskProgress
+
+type FlatTask = { task: HistoryTask; date: string }
 
 const MIN_PAGE_SIZE = 5
 const MAX_PAGE_SIZE = 25
@@ -73,7 +75,7 @@ export function HistoryPage() {
   )
 
   const pagedGroups = useMemo(() => {
-    const map = new Map<string, Task[]>()
+    const map = new Map<string, HistoryTask[]>()
     for (const { task, date } of pagedTasks) {
       const existing = map.get(date)
       if (existing) {

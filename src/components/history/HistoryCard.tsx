@@ -1,8 +1,8 @@
 import { Check } from 'lucide-react'
-import type { Task } from '@/db/schema'
+import type { SubtaskProgress, Task } from '@/db/schema'
 
 type HistoryCardProps = {
-  task: Task
+  task: Task & SubtaskProgress
 }
 
 function formatTime(value: Date | string): string {
@@ -31,6 +31,8 @@ export function HistoryCard({ task }: HistoryCardProps) {
         {completedAt && (
           <span className="text-xs text-muted dark:text-dark-muted">
             Completed at {formatTime(completedAt)}
+            {task.subtaskTotal > 0 &&
+              ` · ${task.subtaskDone}/${task.subtaskTotal} subtask`}
           </span>
         )}
       </div>

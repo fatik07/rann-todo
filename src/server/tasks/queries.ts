@@ -3,7 +3,8 @@ import { z } from 'zod'
 import { and, asc, eq, inArray, isNull } from 'drizzle-orm'
 
 import { db } from '@/db'
-import { tasks } from '@/db/schema'
+import { subtasks, tasks } from '@/db/schema'
+import type { Subtask, TaskWithSubtasks } from '@/db/schema'
 import { getCurrentUserId } from '@/server/auth'
 
 const inputSchema = z.object({
@@ -23,7 +24,7 @@ const inputSchema = z.object({
  */
 export const getTasks = createServerFn({ method: 'GET' })
   .inputValidator(inputSchema)
-  .handler(async ({ data }) => {
+  .handler(async ({ data }): Promise<TaskWithSubtasks[]> => {
     const userId = await getCurrentUserId()
     const workspaceId = data.workspaceId ?? null
 
@@ -41,9 +42,34 @@ export const getTasks = createServerFn({ method: 'GET' })
       conditions.push(eq(tasks.status, data.status))
     }
 
-    return db
+    const rows = await db
       .select()
       .from(tasks)
       .where(and(...conditions))
       .orderBy(asc(tasks.position))
+
+    if (rows.length === 0) return []
+
+    const subtaskRows = await db
+      .select()
+      .from(subtasks)
+      .where(
+        inArray(
+          subtasks.taskId,
+          rows.map((task) => task.id),
+        ),
+      )
+      .orderBy(asc(subtasks.position))
+
+    const byTask = new Map<string, Subtask[]>()
+    for (const subtask of subtaskRows) {
+      const list = byTask.get(subtask.taskId) ?? []
+      list.push(subtask)
+      byTask.set(subtask.taskId, list)
+    }
+
+    return rows.map((task) => ({
+      ...task,
+      subtasks: byTask.get(task.id) ?? [],
+    }))
   })

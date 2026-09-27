@@ -1,15 +1,15 @@
 import type { CSSProperties, MouseEvent } from 'react'
 import { CSS } from '@dnd-kit/utilities'
 import { useSortable } from '@dnd-kit/sortable'
-import { Check, Play, Trash2, Undo2 } from 'lucide-react'
-import type { Task } from '@/db/schema'
+import { Check, ListChecks, Play, Trash2, Undo2 } from 'lucide-react'
+import type { TaskWithSubtasks } from '@/db/schema'
 import { Button } from '@/components/ui/Button'
 import { Tooltip } from '@/components/shared/Tooltip'
 import { useCompleteTask, useDeleteTask, useMoveTask } from '@/features/tasks'
 
 type TaskCardProps = {
-  task: Task
-  onEdit?: (task: Task) => void
+  task: TaskWithSubtasks
+  onEdit?: (task: TaskWithSubtasks) => void
   workspaceId: string | null
 }
 
@@ -52,6 +52,8 @@ export function TaskCard({ task, onEdit, workspaceId }: TaskCardProps) {
   }
 
   const isInProgress = task.status === 'IN_PROGRESS'
+  const subtaskTotal = task.subtasks.length
+  const subtaskDone = task.subtasks.filter((s) => s.completedAt).length
 
   return (
     <div
@@ -112,6 +114,19 @@ export function TaskCard({ task, onEdit, workspaceId }: TaskCardProps) {
           {task.title}
         </span>
       </button>
+      {subtaskTotal > 0 && (
+        <span
+          aria-label={`${subtaskDone} dari ${subtaskTotal} subtask selesai`}
+          className={`flex shrink-0 items-center gap-1 rounded-md border-2 px-1.5 py-0.5 text-xs font-semibold tabular-nums ${
+            subtaskDone === subtaskTotal
+              ? 'border-ink bg-sage text-white dark:border-dark-ink dark:bg-dark-sage dark:text-dark-ink'
+              : 'border-ink/15 text-muted dark:border-dark-ink/15 dark:text-dark-muted'
+          }`}
+        >
+          <ListChecks className="h-3.5 w-3.5" />
+          {subtaskDone}/{subtaskTotal}
+        </span>
+      )}
       <button
         type="button"
         onClick={handleDelete}

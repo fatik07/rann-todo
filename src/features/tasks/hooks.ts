@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import type { QueryClient } from '@tanstack/react-query'
-import type { Task } from '@/db/schema'
+import type { SubtaskInput, TaskWithSubtasks } from '@/db/schema'
 
 import {
   archiveExpiredTasks as archiveExpiredTasksFn,
@@ -25,6 +25,7 @@ export type UpdateTaskVariables = {
   title?: string
   description?: string | null
   dueDate?: string | null
+  subtasks?: SubtaskInput[]
 }
 
 export type MoveTaskVariables = {
@@ -45,19 +46,23 @@ export type ReorderTasksVariables = {
 
 function snapshotTasks(
   qc: QueryClient,
-): Array<[readonly unknown[], Task[] | undefined]> {
-  return qc.getQueriesData<Task[]>({ queryKey: taskKeys.lists() })
+): Array<[readonly unknown[], TaskWithSubtasks[] | undefined]> {
+  return qc.getQueriesData<TaskWithSubtasks[]>({ queryKey: taskKeys.lists() })
 }
 
-function patchTasks(qc: QueryClient, patch: (tasks: Task[]) => Task[]): void {
-  qc.setQueriesData<Task[]>({ queryKey: taskKeys.lists() }, (old) =>
-    old ? patch(old) : old,
+function patchTasks(
+  qc: QueryClient,
+  patch: (tasks: TaskWithSubtasks[]) => TaskWithSubtasks[],
+): void {
+  qc.setQueriesData<TaskWithSubtasks[]>(
+    { queryKey: taskKeys.lists() },
+    (old) => (old ? patch(old) : old),
   )
 }
 
 function rollback(
   qc: QueryClient,
-  previous: Array<[readonly unknown[], Task[] | undefined]>,
+  previous: Array<[readonly unknown[], TaskWithSubtasks[] | undefined]>,
 ): void {
   for (const [key, data] of previous) {
     qc.setQueryData(key, data)
@@ -110,6 +115,7 @@ export function useCreateTask() {
       description?: string
       dueDate?: string
       workspaceId: string | null
+      subtasks?: SubtaskInput[]
     }) => createTaskFn({ data: input }),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: taskKeys.lists() })
@@ -126,10 +132,21 @@ export function useUpdateTask() {
       await qc.cancelQueries({ queryKey: taskKeys.lists() })
       const previous = snapshotTasks(qc)
 
-      const { id, ...rest } = variables
+      const { id, subtasks, ...rest } = variables
       const patch: Record<string, unknown> = {}
       for (const [key, value] of Object.entries(rest)) {
         if (value !== undefined) patch[key] = value
+      }
+      if (subtasks !== undefined) {
+        patch.subtasks = subtasks.map((item, position) => ({
+          id: item.id ?? crypto.randomUUID(),
+          taskId: id,
+          title: item.title,
+          position,
+          completedAt: item.done ? new Date() : null,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        }))
       }
 
       if (Object.keys(patch).length > 0) {

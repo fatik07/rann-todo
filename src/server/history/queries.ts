@@ -1,15 +1,15 @@
 import { createServerFn } from '@tanstack/react-start'
 import { z } from 'zod'
-import { and, desc, eq, inArray, isNull } from 'drizzle-orm'
+import { and, count, desc, eq, inArray, isNull } from 'drizzle-orm'
 
 import { db } from '@/db'
-import { tasks } from '@/db/schema'
-import type { Task } from '@/db/schema'
+import { subtasks, tasks } from '@/db/schema'
+import type { SubtaskProgress, Task } from '@/db/schema'
 import { getCurrentUserId } from '@/server/auth'
 
 export type HistoryGroup = {
   date: string
-  tasks: Task[]
+  tasks: Array<Task & SubtaskProgress>
 }
 
 const historySchema = z.object({
@@ -46,12 +46,37 @@ export const getHistory = createServerFn({ method: 'GET' })
       )
       .orderBy(desc(tasks.completedAt))
 
+    const progressRows =
+      rows.length === 0
+        ? []
+        : await db
+            .select({
+              taskId: subtasks.taskId,
+              total: count(),
+              done: count(subtasks.completedAt),
+            })
+            .from(subtasks)
+            .where(
+              inArray(
+                subtasks.taskId,
+                rows.map((task) => task.id),
+              ),
+            )
+            .groupBy(subtasks.taskId)
+
+    const progress = new Map(progressRows.map((row) => [row.taskId, row]))
+
     const groups = new Map<string, HistoryGroup>()
     for (const task of rows) {
       if (!task.completedAt) continue
       const dateKey = formatDateKey(task.completedAt)
       const group = groups.get(dateKey) ?? { date: dateKey, tasks: [] }
-      group.tasks.push(task)
+      const taskProgress = progress.get(task.id)
+      group.tasks.push({
+        ...task,
+        subtaskTotal: taskProgress?.total ?? 0,
+        subtaskDone: taskProgress?.done ?? 0,
+      })
       groups.set(dateKey, group)
     }
 

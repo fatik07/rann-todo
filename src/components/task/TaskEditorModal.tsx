@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import type { FormEvent } from 'react'
 import { CalendarPlus } from 'lucide-react'
-import type { Task } from '@/db/schema'
+import type { SubtaskInput, TaskWithSubtasks } from '@/db/schema'
 import { useUpdateTask } from '@/features/tasks'
 import { formatDateTime } from '@/lib/dates'
 
@@ -9,10 +9,12 @@ import { Button } from '@/components/ui/Button'
 import { Dialog } from '@/components/ui/Dialog'
 import { Input } from '@/components/ui/Input'
 import { Textarea } from '@/components/ui/Textarea'
+import { SubtaskList } from './SubtaskList'
+import type { SubtaskDraft } from './SubtaskList'
 
 type TaskEditorModalProps = {
   open: boolean
-  task?: Task | null
+  task?: TaskWithSubtasks | null
   onClose: () => void
   /**
    * Called when creating a new task. The parent injects workspace context
@@ -22,7 +24,17 @@ type TaskEditorModalProps = {
     title: string
     description?: string
     dueDate?: string
+    subtasks?: SubtaskInput[]
   }) => void
+}
+
+function toDrafts(task?: TaskWithSubtasks | null): SubtaskDraft[] {
+  return (task?.subtasks ?? []).map((subtask) => ({
+    key: subtask.id,
+    id: subtask.id,
+    title: subtask.title,
+    done: subtask.completedAt !== null,
+  }))
 }
 
 export function TaskEditorModal({
@@ -36,11 +48,13 @@ export function TaskEditorModal({
 
   const [title, setTitle] = useState('')
   const [description, setDescription] = useState('')
+  const [subtasks, setSubtasks] = useState<SubtaskDraft[]>([])
 
   useEffect(() => {
     if (!open) return
     setTitle(task?.title ?? '')
     setDescription(task?.description ?? '')
+    setSubtasks(toDrafts(task))
   }, [open, task])
 
   const handleSubmit = (e: FormEvent) => {
@@ -48,12 +62,21 @@ export function TaskEditorModal({
     const trimmedTitle = title.trim()
     if (!trimmedTitle) return
 
+    const subtaskInputs: SubtaskInput[] = subtasks
+      .map(({ id, title: subtaskTitle, done }) => ({
+        id,
+        title: subtaskTitle.trim(),
+        done,
+      }))
+      .filter((subtask) => subtask.title)
+
     if (isEdit) {
       update.mutate(
         {
           id: task.id,
           title: trimmedTitle,
           description: description.trim() || null,
+          subtasks: subtaskInputs,
         },
         { onSuccess: onClose },
       )
@@ -61,6 +84,7 @@ export function TaskEditorModal({
       onCreate({
         title: trimmedTitle,
         description: description.trim() || undefined,
+        subtasks: subtaskInputs.length > 0 ? subtaskInputs : undefined,
       })
       onClose()
     }
@@ -100,6 +124,13 @@ export function TaskEditorModal({
             className="resize-y"
           />
         </label>
+
+        <div className="flex flex-col gap-1">
+          <span className="text-xs font-bold uppercase tracking-wider text-muted dark:text-dark-muted">
+            Subtasks (optional)
+          </span>
+          <SubtaskList items={subtasks} onChange={setSubtasks} />
+        </div>
 
         <div className="mt-2 flex items-center justify-end gap-2">
           {isEdit && (

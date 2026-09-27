@@ -11,7 +11,7 @@ import {
 import type { DragEndEvent, DragStartEvent } from '@dnd-kit/core'
 import { arrayMove, sortableKeyboardCoordinates } from '@dnd-kit/sortable'
 import { ListTodo, Plus } from 'lucide-react'
-import type { Task } from '@/db/schema'
+import type { SubtaskInput, TaskWithSubtasks } from '@/db/schema'
 
 import {
   useArchiveOnMount,
@@ -34,14 +34,14 @@ type ReorderItem = {
   workspaceId: string | null
 }
 
-function byPosition(a: Task, b: Task) {
+function byPosition(a: TaskWithSubtasks, b: TaskWithSubtasks) {
   return a.position - b.position
 }
 
 export function DashboardPage() {
   const { workspaceId } = useCurrentWorkspace()
   const [createOpen, setCreateOpen] = useState(false)
-  const [editingTask, setEditingTask] = useState<Task | null>(null)
+  const [editingTask, setEditingTask] = useState<TaskWithSubtasks | null>(null)
   const [activeId, setActiveId] = useState<string | null>(null)
 
   // Single network request for both boards (Phase 1)
@@ -68,7 +68,7 @@ export function DashboardPage() {
     }),
   )
 
-  const tasksByStatus = useMemo<Record<BoardStatus, Task[]>>(
+  const tasksByStatus = useMemo<Record<BoardStatus, TaskWithSubtasks[]>>(
     () => ({
       TODO: todoTasks,
       IN_PROGRESS: inProgressTasks,
@@ -76,7 +76,7 @@ export function DashboardPage() {
     [todoTasks, inProgressTasks],
   )
 
-  const findTask = (id: string): Task | undefined =>
+  const findTask = (id: string): TaskWithSubtasks | undefined =>
     tasksByStatus.TODO.find((t) => t.id === id) ??
     tasksByStatus.IN_PROGRESS.find((t) => t.id === id)
 
@@ -156,7 +156,7 @@ export function DashboardPage() {
 
     const sourceStatus = sourceTask.status as BoardStatus
     const sourceIndex = tasksByStatus[sourceStatus].findIndex(
-      (t: Task) => t.id === draggedId,
+      (t: TaskWithSubtasks) => t.id === draggedId,
     )
 
     let destStatus: BoardStatus
@@ -170,7 +170,7 @@ export function DashboardPage() {
       if (!overTask) return
       destStatus = overTask.status as BoardStatus
       destIndex = tasksByStatus[destStatus].findIndex(
-        (t: Task) => t.id === overId,
+        (t: TaskWithSubtasks) => t.id === overId,
       )
     }
 
@@ -201,6 +201,7 @@ export function DashboardPage() {
     title: string
     description?: string
     dueDate?: string
+    subtasks?: SubtaskInput[]
   }) => {
     create.mutate({ ...input, workspaceId })
   }

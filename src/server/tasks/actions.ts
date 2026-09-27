@@ -3,7 +3,7 @@ import { z } from 'zod'
 import { and, eq, isNull, sql } from 'drizzle-orm'
 
 import { db } from '@/db'
-import { tasks } from '@/db/schema'
+import { subtasks, tasks } from '@/db/schema'
 import { getCurrentUserId } from '@/server/auth'
 
 const moveSchema = z.object({
@@ -112,18 +112,28 @@ export const completeTask = createServerFn({ method: 'POST' })
   .handler(async ({ data }) => {
     const userId = await getCurrentUserId()
 
-    const [updated] = await db
-      .update(tasks)
-      .set({
-        status: 'COMPLETED',
-        completedAt: new Date(),
-      })
-      .where(and(eq(tasks.id, data.id), eq(tasks.userId, userId)))
-      .returning()
+    const now = new Date()
 
-    if (!updated) {
-      throw new Error('Task not found')
-    }
+    return db.transaction(async (tx) => {
+      const [updated] = await tx
+        .update(tasks)
+        .set({
+          status: 'COMPLETED',
+          completedAt: now,
+        })
+        .where(and(eq(tasks.id, data.id), eq(tasks.userId, userId)))
+        .returning()
 
-    return updated
+      if (!updated) {
+        throw new Error('Task not found')
+      }
+
+      // Completing the parent closes any remaining checklist items.
+      await tx
+        .update(subtasks)
+        .set({ completedAt: now })
+        .where(and(eq(subtasks.taskId, data.id), isNull(subtasks.completedAt)))
+
+      return updated
+    })
   })
