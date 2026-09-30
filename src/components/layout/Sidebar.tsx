@@ -20,7 +20,7 @@ export function Sidebar({ collapsed }: SidebarProps) {
 
   const dashboardActive =
     pathname === '/' ||
-    (pathname.startsWith('/w/') && !pathname.endsWith('/history'))
+    (pathname.startsWith('/w/') && !pathname.endsWith('/history') && !pathname.endsWith('/statistics'))
   const historyActive = pathname === '/history' || pathname.endsWith('/history')
 
   return (

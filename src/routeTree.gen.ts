@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as HistoryRouteImport } from './routes/history'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as WWorkspaceIdIndexRouteImport } from './routes/w/$workspaceId/index'
+import { Route as WWorkspaceIdStatisticsRouteImport } from './routes/w/$workspaceId/statistics'
 import { Route as WWorkspaceIdHistoryRouteImport } from './routes/w/$workspaceId/history'
 
 const HistoryRoute = HistoryRouteImport.update({
@@ -29,6 +30,11 @@ const WWorkspaceIdIndexRoute = WWorkspaceIdIndexRouteImport.update({
   path: '/w/$workspaceId/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const WWorkspaceIdStatisticsRoute = WWorkspaceIdStatisticsRouteImport.update({
+  id: '/w/$workspaceId/statistics',
+  path: '/w/$workspaceId/statistics',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const WWorkspaceIdHistoryRoute = WWorkspaceIdHistoryRouteImport.update({
   id: '/w/$workspaceId/history',
   path: '/w/$workspaceId/history',
@@ -39,12 +45,14 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/history': typeof HistoryRoute
   '/w/$workspaceId/history': typeof WWorkspaceIdHistoryRoute
+  '/w/$workspaceId/statistics': typeof WWorkspaceIdStatisticsRoute
   '/w/$workspaceId/': typeof WWorkspaceIdIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/history': typeof HistoryRoute
   '/w/$workspaceId/history': typeof WWorkspaceIdHistoryRoute
+  '/w/$workspaceId/statistics': typeof WWorkspaceIdStatisticsRoute
   '/w/$workspaceId': typeof WWorkspaceIdIndexRoute
 }
 export interface FileRoutesById {
@@ -52,18 +60,30 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/history': typeof HistoryRoute
   '/w/$workspaceId/history': typeof WWorkspaceIdHistoryRoute
+  '/w/$workspaceId/statistics': typeof WWorkspaceIdStatisticsRoute
   '/w/$workspaceId/': typeof WWorkspaceIdIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/history' | '/w/$workspaceId/history' | '/w/$workspaceId/'
+  fullPaths:
+    | '/'
+    | '/history'
+    | '/w/$workspaceId/history'
+    | '/w/$workspaceId/statistics'
+    | '/w/$workspaceId/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/history' | '/w/$workspaceId/history' | '/w/$workspaceId'
+  to:
+    | '/'
+    | '/history'
+    | '/w/$workspaceId/history'
+    | '/w/$workspaceId/statistics'
+    | '/w/$workspaceId'
   id:
     | '__root__'
     | '/'
     | '/history'
     | '/w/$workspaceId/history'
+    | '/w/$workspaceId/statistics'
     | '/w/$workspaceId/'
   fileRoutesById: FileRoutesById
 }
@@ -71,6 +91,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   HistoryRoute: typeof HistoryRoute
   WWorkspaceIdHistoryRoute: typeof WWorkspaceIdHistoryRoute
+  WWorkspaceIdStatisticsRoute: typeof WWorkspaceIdStatisticsRoute
   WWorkspaceIdIndexRoute: typeof WWorkspaceIdIndexRoute
 }
 
@@ -97,6 +118,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof WWorkspaceIdIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/w/$workspaceId/statistics': {
+      id: '/w/$workspaceId/statistics'
+      path: '/w/$workspaceId/statistics'
+      fullPath: '/w/$workspaceId/statistics'
+      preLoaderRoute: typeof WWorkspaceIdStatisticsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/w/$workspaceId/history': {
       id: '/w/$workspaceId/history'
       path: '/w/$workspaceId/history'
@@ -111,6 +139,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   HistoryRoute: HistoryRoute,
   WWorkspaceIdHistoryRoute: WWorkspaceIdHistoryRoute,
+  WWorkspaceIdStatisticsRoute: WWorkspaceIdStatisticsRoute,
   WWorkspaceIdIndexRoute: WWorkspaceIdIndexRoute,
 }
 export const routeTree = rootRouteImport
