@@ -13,6 +13,7 @@ import { Route as HistoryRouteImport } from './routes/history'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as WWorkspaceIdIndexRouteImport } from './routes/w/$workspaceId/index'
 import { Route as WWorkspaceIdStatisticsRouteImport } from './routes/w/$workspaceId/statistics'
+import { Route as WWorkspaceIdNotesRouteImport } from './routes/w/$workspaceId/notes'
 import { Route as WWorkspaceIdHistoryRouteImport } from './routes/w/$workspaceId/history'
 
 const HistoryRoute = HistoryRouteImport.update({
@@ -35,6 +36,11 @@ const WWorkspaceIdStatisticsRoute = WWorkspaceIdStatisticsRouteImport.update({
   path: '/w/$workspaceId/statistics',
   getParentRoute: () => rootRouteImport,
 } as any)
+const WWorkspaceIdNotesRoute = WWorkspaceIdNotesRouteImport.update({
+  id: '/w/$workspaceId/notes',
+  path: '/w/$workspaceId/notes',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const WWorkspaceIdHistoryRoute = WWorkspaceIdHistoryRouteImport.update({
   id: '/w/$workspaceId/history',
   path: '/w/$workspaceId/history',
@@ -45,6 +51,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/history': typeof HistoryRoute
   '/w/$workspaceId/history': typeof WWorkspaceIdHistoryRoute
+  '/w/$workspaceId/notes': typeof WWorkspaceIdNotesRoute
   '/w/$workspaceId/statistics': typeof WWorkspaceIdStatisticsRoute
   '/w/$workspaceId/': typeof WWorkspaceIdIndexRoute
 }
@@ -52,6 +59,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/history': typeof HistoryRoute
   '/w/$workspaceId/history': typeof WWorkspaceIdHistoryRoute
+  '/w/$workspaceId/notes': typeof WWorkspaceIdNotesRoute
   '/w/$workspaceId/statistics': typeof WWorkspaceIdStatisticsRoute
   '/w/$workspaceId': typeof WWorkspaceIdIndexRoute
 }
@@ -60,6 +68,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/history': typeof HistoryRoute
   '/w/$workspaceId/history': typeof WWorkspaceIdHistoryRoute
+  '/w/$workspaceId/notes': typeof WWorkspaceIdNotesRoute
   '/w/$workspaceId/statistics': typeof WWorkspaceIdStatisticsRoute
   '/w/$workspaceId/': typeof WWorkspaceIdIndexRoute
 }
@@ -69,6 +78,7 @@ export interface FileRouteTypes {
     | '/'
     | '/history'
     | '/w/$workspaceId/history'
+    | '/w/$workspaceId/notes'
     | '/w/$workspaceId/statistics'
     | '/w/$workspaceId/'
   fileRoutesByTo: FileRoutesByTo
@@ -76,6 +86,7 @@ export interface FileRouteTypes {
     | '/'
     | '/history'
     | '/w/$workspaceId/history'
+    | '/w/$workspaceId/notes'
     | '/w/$workspaceId/statistics'
     | '/w/$workspaceId'
   id:
@@ -83,6 +94,7 @@ export interface FileRouteTypes {
     | '/'
     | '/history'
     | '/w/$workspaceId/history'
+    | '/w/$workspaceId/notes'
     | '/w/$workspaceId/statistics'
     | '/w/$workspaceId/'
   fileRoutesById: FileRoutesById
@@ -91,6 +103,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   HistoryRoute: typeof HistoryRoute
   WWorkspaceIdHistoryRoute: typeof WWorkspaceIdHistoryRoute
+  WWorkspaceIdNotesRoute: typeof WWorkspaceIdNotesRoute
   WWorkspaceIdStatisticsRoute: typeof WWorkspaceIdStatisticsRoute
   WWorkspaceIdIndexRoute: typeof WWorkspaceIdIndexRoute
 }
@@ -125,6 +138,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof WWorkspaceIdStatisticsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/w/$workspaceId/notes': {
+      id: '/w/$workspaceId/notes'
+      path: '/w/$workspaceId/notes'
+      fullPath: '/w/$workspaceId/notes'
+      preLoaderRoute: typeof WWorkspaceIdNotesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/w/$workspaceId/history': {
       id: '/w/$workspaceId/history'
       path: '/w/$workspaceId/history'
@@ -139,6 +159,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   HistoryRoute: HistoryRoute,
   WWorkspaceIdHistoryRoute: WWorkspaceIdHistoryRoute,
+  WWorkspaceIdNotesRoute: WWorkspaceIdNotesRoute,
   WWorkspaceIdStatisticsRoute: WWorkspaceIdStatisticsRoute,
   WWorkspaceIdIndexRoute: WWorkspaceIdIndexRoute,
 }

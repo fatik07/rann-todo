@@ -11,3 +11,5 @@ export {
   renameWorkspace,
   deleteWorkspace,
 } from './workspaces'
+
+export { getNotes, createNote, updateNote, deleteNote } from './notes'

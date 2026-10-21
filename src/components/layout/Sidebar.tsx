@@ -1,5 +1,5 @@
 import { Link, useRouterState } from '@tanstack/react-router'
-import { CheckCircle2, History, LayoutList } from 'lucide-react'
+import { CheckCircle2, History, LayoutList, StickyNote } from 'lucide-react'
 
 import {
   DEFAULT_WORKSPACE_SLUG,
@@ -20,7 +20,11 @@ export function Sidebar({ collapsed }: SidebarProps) {
 
   const dashboardActive =
     pathname === '/' ||
-    (pathname.startsWith('/w/') && !pathname.endsWith('/history') && !pathname.endsWith('/statistics'))
+    (pathname.startsWith('/w/') &&
+      !pathname.endsWith('/history') &&
+      !pathname.endsWith('/statistics') &&
+      !pathname.endsWith('/notes'))
+  const notesActive = pathname.endsWith('/notes')
   const historyActive = pathname === '/history' || pathname.endsWith('/history')
 
   return (
@@ -66,6 +70,24 @@ export function Sidebar({ collapsed }: SidebarProps) {
           >
             <LayoutList className="h-4 w-4 shrink-0" />
             {!collapsed && 'Dashboard'}
+          </Link>
+          <Link
+            to="/w/$workspaceId/notes"
+            params={{ workspaceId: wsParam }}
+            aria-label="Notes"
+            title={collapsed ? 'Notes' : undefined}
+            className={`flex items-center rounded-brutal-sm border-2 transition-all ${
+              collapsed
+                ? 'h-10 w-full justify-center'
+                : 'gap-3 px-4 py-2.5 text-sm font-bold uppercase tracking-wider'
+            } ${
+              notesActive
+                ? 'border-ink bg-pink-light text-ink shadow-brutal-soft dark:border-dark-ink dark:bg-dark-pink-light dark:text-dark-ink dark:shadow-brutal-soft-dark'
+                : 'border-transparent text-muted hover:border-ink/15 hover:text-ink dark:text-dark-muted dark:hover:border-dark-ink/15 dark:hover:text-dark-ink'
+            }`}
+          >
+            <StickyNote className="h-4 w-4 shrink-0" />
+            {!collapsed && 'Notes'}
           </Link>
           <Link
             to="/w/$workspaceId/history"

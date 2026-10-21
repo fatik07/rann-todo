@@ -8,6 +8,7 @@ import {
 } from '@/server'
 import { taskKeys } from '@/features/tasks/api'
 import { historyKeys } from '@/features/history/api'
+import { noteKeys } from '@/features/notes/api'
 import { workspaceKeys } from './api'
 
 const WORKSPACES_STALE_TIME_MS = 30_000
@@ -51,6 +52,7 @@ export function useDeleteWorkspace() {
       qc.invalidateQueries({ queryKey: workspaceKeys.lists() })
       qc.invalidateQueries({ queryKey: taskKeys.lists() })
       qc.invalidateQueries({ queryKey: historyKeys.lists() })
+      qc.invalidateQueries({ queryKey: noteKeys.lists() })
     },
   })
 }

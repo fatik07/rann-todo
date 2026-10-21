@@ -3,7 +3,7 @@ import { z } from 'zod'
 import { and, eq } from 'drizzle-orm'
 
 import { db } from '@/db'
-import { tasks, workspaces } from '@/db/schema'
+import { notes, tasks, workspaces } from '@/db/schema'
 import { getCurrentUserId } from '@/server/auth'
 
 const createSchema = z.object({
@@ -78,6 +78,11 @@ export const deleteWorkspace = createServerFn({ method: 'POST' })
         .update(tasks)
         .set({ workspaceId: null })
         .where(and(eq(tasks.userId, userId), eq(tasks.workspaceId, data.id)))
+
+      await tx
+        .update(notes)
+        .set({ workspaceId: null })
+        .where(and(eq(notes.userId, userId), eq(notes.workspaceId, data.id)))
 
       await tx
         .delete(workspaces)
