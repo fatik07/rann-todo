@@ -91,7 +91,7 @@ const deleteSchema = z.object({
 })
 
 export const createTask = createServerFn({ method: 'POST' })
-  .inputValidator(createSchema)
+  .validator(createSchema)
   .handler(async ({ data }) => {
     const userId = await getCurrentUserId()
     const workspaceId = data.workspaceId ?? null
@@ -137,7 +137,7 @@ export const createTask = createServerFn({ method: 'POST' })
   })
 
 export const updateTask = createServerFn({ method: 'POST' })
-  .inputValidator(updateSchema)
+  .validator(updateSchema)
   .handler(async ({ data }) => {
     const userId = await getCurrentUserId()
     const { id, subtasks: subtaskItems, ...updates } = data
@@ -175,7 +175,7 @@ export const updateTask = createServerFn({ method: 'POST' })
   })
 
 export const deleteTask = createServerFn({ method: 'POST' })
-  .inputValidator(deleteSchema)
+  .validator(deleteSchema)
   .handler(async ({ data }) => {
     const userId = await getCurrentUserId()
 

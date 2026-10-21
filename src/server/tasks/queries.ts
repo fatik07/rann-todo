@@ -23,7 +23,7 @@ const inputSchema = z.object({
  *  - uuid string    → tasks in that specific workspace (verified by user_id at write time)
  */
 export const getTasks = createServerFn({ method: 'GET' })
-  .inputValidator(inputSchema)
+  .validator(inputSchema)
   .handler(async ({ data }): Promise<TaskWithSubtasks[]> => {
     const userId = await getCurrentUserId()
     const workspaceId = data.workspaceId ?? null

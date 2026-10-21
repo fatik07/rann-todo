@@ -24,7 +24,7 @@ function formatDateKey(date: Date): string {
 }
 
 export const getHistory = createServerFn({ method: 'GET' })
-  .inputValidator(historySchema)
+  .validator(historySchema)
   .handler(async ({ data }): Promise<HistoryGroup[]> => {
     const userId = await getCurrentUserId()
     const workspaceId = data.workspaceId ?? null

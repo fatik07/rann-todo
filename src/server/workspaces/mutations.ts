@@ -20,7 +20,7 @@ const deleteSchema = z.object({
 })
 
 export const createWorkspace = createServerFn({ method: 'POST' })
-  .inputValidator(createSchema)
+  .validator(createSchema)
   .handler(async ({ data }) => {
     const userId = await getCurrentUserId()
 
@@ -36,7 +36,7 @@ export const createWorkspace = createServerFn({ method: 'POST' })
   })
 
 export const renameWorkspace = createServerFn({ method: 'POST' })
-  .inputValidator(renameSchema)
+  .validator(renameSchema)
   .handler(async ({ data }) => {
     const userId = await getCurrentUserId()
 
@@ -60,7 +60,7 @@ export const renameWorkspace = createServerFn({ method: 'POST' })
  * call this with a default id, but we guard anyway by scoping to non-null ids.
  */
 export const deleteWorkspace = createServerFn({ method: 'POST' })
-  .inputValidator(deleteSchema)
+  .validator(deleteSchema)
   .handler(async ({ data }) => {
     const userId = await getCurrentUserId()
 

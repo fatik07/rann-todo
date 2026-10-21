@@ -9,21 +9,21 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as HistoryRouteImport } from './routes/history'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as HistoryRouteImport } from './routes/history'
 import { Route as WWorkspaceIdIndexRouteImport } from './routes/w/$workspaceId/index'
-import { Route as WWorkspaceIdStatisticsRouteImport } from './routes/w/$workspaceId/statistics'
-import { Route as WWorkspaceIdNotesRouteImport } from './routes/w/$workspaceId/notes'
 import { Route as WWorkspaceIdHistoryRouteImport } from './routes/w/$workspaceId/history'
+import { Route as WWorkspaceIdNotesRouteImport } from './routes/w/$workspaceId/notes'
+import { Route as WWorkspaceIdStatisticsRouteImport } from './routes/w/$workspaceId/statistics'
 
-const HistoryRoute = HistoryRouteImport.update({
-  id: '/history',
-  path: '/history',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const HistoryRoute = HistoryRouteImport.update({
+  id: '/history',
+  path: '/history',
   getParentRoute: () => rootRouteImport,
 } as any)
 const WWorkspaceIdIndexRoute = WWorkspaceIdIndexRouteImport.update({
@@ -31,9 +31,9 @@ const WWorkspaceIdIndexRoute = WWorkspaceIdIndexRouteImport.update({
   path: '/w/$workspaceId/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const WWorkspaceIdStatisticsRoute = WWorkspaceIdStatisticsRouteImport.update({
-  id: '/w/$workspaceId/statistics',
-  path: '/w/$workspaceId/statistics',
+const WWorkspaceIdHistoryRoute = WWorkspaceIdHistoryRouteImport.update({
+  id: '/w/$workspaceId/history',
+  path: '/w/$workspaceId/history',
   getParentRoute: () => rootRouteImport,
 } as any)
 const WWorkspaceIdNotesRoute = WWorkspaceIdNotesRouteImport.update({
@@ -41,9 +41,9 @@ const WWorkspaceIdNotesRoute = WWorkspaceIdNotesRouteImport.update({
   path: '/w/$workspaceId/notes',
   getParentRoute: () => rootRouteImport,
 } as any)
-const WWorkspaceIdHistoryRoute = WWorkspaceIdHistoryRouteImport.update({
-  id: '/w/$workspaceId/history',
-  path: '/w/$workspaceId/history',
+const WWorkspaceIdStatisticsRoute = WWorkspaceIdStatisticsRouteImport.update({
+  id: '/w/$workspaceId/statistics',
+  path: '/w/$workspaceId/statistics',
   getParentRoute: () => rootRouteImport,
 } as any)
 
@@ -110,18 +110,18 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/history': {
-      id: '/history'
-      path: '/history'
-      fullPath: '/history'
-      preLoaderRoute: typeof HistoryRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/': {
       id: '/'
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/history': {
+      id: '/history'
+      path: '/history'
+      fullPath: '/history'
+      preLoaderRoute: typeof HistoryRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/w/$workspaceId/': {
@@ -131,11 +131,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof WWorkspaceIdIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/w/$workspaceId/statistics': {
-      id: '/w/$workspaceId/statistics'
-      path: '/w/$workspaceId/statistics'
-      fullPath: '/w/$workspaceId/statistics'
-      preLoaderRoute: typeof WWorkspaceIdStatisticsRouteImport
+    '/w/$workspaceId/history': {
+      id: '/w/$workspaceId/history'
+      path: '/w/$workspaceId/history'
+      fullPath: '/w/$workspaceId/history'
+      preLoaderRoute: typeof WWorkspaceIdHistoryRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/w/$workspaceId/notes': {
@@ -145,11 +145,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof WWorkspaceIdNotesRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/w/$workspaceId/history': {
-      id: '/w/$workspaceId/history'
-      path: '/w/$workspaceId/history'
-      fullPath: '/w/$workspaceId/history'
-      preLoaderRoute: typeof WWorkspaceIdHistoryRouteImport
+    '/w/$workspaceId/statistics': {
+      id: '/w/$workspaceId/statistics'
+      path: '/w/$workspaceId/statistics'
+      fullPath: '/w/$workspaceId/statistics'
+      preLoaderRoute: typeof WWorkspaceIdStatisticsRouteImport
       parentRoute: typeof rootRouteImport
     }
   }

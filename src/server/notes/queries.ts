@@ -12,7 +12,7 @@ const inputSchema = z.object({
 
 /** Notes in the current workspace, most recently edited first. */
 export const getNotes = createServerFn({ method: 'GET' })
-  .inputValidator(inputSchema)
+  .validator(inputSchema)
   .handler(async ({ data }) => {
     const userId = await getCurrentUserId()
     const workspaceId = data.workspaceId ?? null

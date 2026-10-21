@@ -23,7 +23,7 @@ const deleteSchema = z.object({
 })
 
 export const createNote = createServerFn({ method: 'POST' })
-  .inputValidator(createSchema)
+  .validator(createSchema)
   .handler(async ({ data }) => {
     const userId = await getCurrentUserId()
 
@@ -41,7 +41,7 @@ export const createNote = createServerFn({ method: 'POST' })
   })
 
 export const updateNote = createServerFn({ method: 'POST' })
-  .inputValidator(updateSchema)
+  .validator(updateSchema)
   .handler(async ({ data }) => {
     const userId = await getCurrentUserId()
     const { id, ...updates } = data
@@ -67,7 +67,7 @@ export const updateNote = createServerFn({ method: 'POST' })
   })
 
 export const deleteNote = createServerFn({ method: 'POST' })
-  .inputValidator(deleteSchema)
+  .validator(deleteSchema)
   .handler(async ({ data }) => {
     const userId = await getCurrentUserId()
 

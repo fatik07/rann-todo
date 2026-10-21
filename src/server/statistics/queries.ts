@@ -24,7 +24,7 @@ function formatDateKey(date: Date): string {
 }
 
 export const getStatistics = createServerFn({ method: 'GET' })
-    .inputValidator(statsSchema)
+    .validator(statsSchema)
     .handler(async ({ data }): Promise<DailyStats[]> => {
         const userId = await getCurrentUserId()
         const workspaceId = data.workspaceId ?? null

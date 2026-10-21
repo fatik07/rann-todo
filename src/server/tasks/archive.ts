@@ -78,7 +78,7 @@ export async function archiveExpiredTasksInternal({
  * Used by Dashboard mount (fire-and-forget) and potential cron/admin tools.
  */
 export const archiveExpiredTasks = createServerFn({ method: 'POST' })
-  .inputValidator(archiveSchema)
+  .validator(archiveSchema)
   .handler(async ({ data }) => {
     const userId = await getCurrentUserId()
     const workspaceId = data.workspaceId ?? null

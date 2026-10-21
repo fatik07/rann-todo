@@ -32,7 +32,7 @@ const completeSchema = z.object({
 })
 
 export const moveTask = createServerFn({ method: 'POST' })
-  .inputValidator(moveSchema)
+  .validator(moveSchema)
   .handler(async ({ data }) => {
     const userId = await getCurrentUserId()
     const workspaceId = data.workspaceId ?? null
@@ -77,7 +77,7 @@ export const moveTask = createServerFn({ method: 'POST' })
   })
 
 export const updateTaskPositions = createServerFn({ method: 'POST' })
-  .inputValidator(positionsSchema)
+  .validator(positionsSchema)
   .handler(async ({ data }) => {
     const userId = await getCurrentUserId()
 
@@ -108,7 +108,7 @@ export const updateTaskPositions = createServerFn({ method: 'POST' })
   })
 
 export const completeTask = createServerFn({ method: 'POST' })
-  .inputValidator(completeSchema)
+  .validator(completeSchema)
   .handler(async ({ data }) => {
     const userId = await getCurrentUserId()
 
